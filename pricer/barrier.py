@@ -67,8 +67,7 @@ class Barrier():
                 if price <= self.lower_barrier_level:
                     # print("triggered down")
                     _premium = self.N * np.min([1, price / path[0]])
-                    # do not break since it can stil be knocked out by upper
-            
+                    break
             # triggered none
             if _premium is None:
                 _premium = self.N * (1 + self.coupon_rate * 357 / 365)
