@@ -51,7 +51,6 @@ class Barrier():
     
     def geometric_brownian_motion(self, ul, iv ,  ir , dte , diy , nobs) -> "ndarray. row = t, columns = paths":
         dt = 1 / diy
-
         # Initialize the array
         S = np.zeros((dte + 1, nobs))    
         S[0] = ul
