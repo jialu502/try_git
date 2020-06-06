@@ -49,14 +49,6 @@ class Barrier():
         self.monitoring_dates = [pd.Timestamp(x) for x in monitoring_dates]
         return
     
-    def geometric_brownian_motion(self, ul, iv ,  ir , dte , diy , nobs) -> "ndarray. row = t, columns = paths":
-        dt = 1 / diy
-        # Initialize the array
-        S = np.zeros((dte + 1, nobs))    
-        S[0] = ul
-        for t in range(1, dte + 1):
-            S[t] = S[t - 1] * np.exp((ir - 0.5 * iv ** 2) * dt + iv * np.sqrt(dt) * np.random.standard_normal(nobs))
-        return S
 
     def monto_carlo(self, underlying_process):
         premium_list = []
@@ -66,18 +58,17 @@ class Barrier():
             for trading_date , price in zip(path.index , path):
                 # triggered up event
                 if price > self.upper_barrier_level:
+                    # print("triggered up")
                     t_out = (trading_date - path.index[0]).days
                     _premium = self.N * (1 + self.coupon_rate * t_out/ 365)
-                    # print("triggered up")
                     break
+
                 # triggered down event
-                '''
-                Problem! Actually do we break, or we continue to see it never trigger the up event
-                '''
                 if price <= self.lower_barrier_level:
-                    _premium = self.N * np.min([1, price / path[0]])
                     # print("triggered down")
-                    break
+                    _premium = self.N * np.min([1, price / path[0]])
+                    # do not break since it can stil be knocked out by upper
+            
             # triggered none
             if _premium is None:
                 _premium = self.N * (1 + self.coupon_rate * 357 / 365)
@@ -85,3 +76,7 @@ class Barrier():
             premium_list.append(_premium)
         premium = np.mean(premium_list)
         return premium
+
+    def option_delta(self):
+        return 
+
